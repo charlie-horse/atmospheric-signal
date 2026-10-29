@@ -1,0 +1,650 @@
+{
+  "records": [
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.defs",
+      "cid": "bafyreiaxhc2ot7jzpkrl5ukztgt345xa7fxrsqqvgt7rlxkzgl6pjtfixe",
+      "value": {
+        "id": "is.neuros.atsignal.defs",
+        "defs": {
+          "text": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 64000,
+                "description": "Message text.",
+                "maxGraphemes": 10000
+              }
+            },
+            "description": "A text message."
+          },
+          "plaintext": {
+            "type": "object",
+            "required": [
+              "content"
+            ],
+            "properties": {
+              "content": {
+                "refs": [
+                  "#text",
+                  "#conversationInit",
+                  "#senderKeyDistribution",
+                  "#groupChange",
+                  "#groupSnapshot"
+                ],
+                "type": "union",
+                "description": "The message content."
+              }
+            },
+            "description": "The decrypted payload of any message."
+          },
+          "recordRef": {
+            "type": "object",
+            "required": [
+              "did",
+              "collection",
+              "rkey"
+            ],
+            "properties": {
+              "did": {
+                "type": "string",
+                "format": "did",
+                "description": "DID of the repo that holds the record."
+              },
+              "rkey": {
+                "type": "string",
+                "format": "record-key",
+                "description": "Record key of the record."
+              },
+              "collection": {
+                "type": "string",
+                "format": "nsid",
+                "description": "Collection NSID of the record."
+              }
+            },
+            "description": "Location-independent reference to a record. Use instead of AT-URIs so records stay portable to Spaces."
+          },
+          "groupAction": {
+            "type": "object",
+            "required": [
+              "action",
+              "did"
+            ],
+            "properties": {
+              "did": {
+                "type": "string",
+                "format": "did",
+                "description": "DID the action applies to."
+              },
+              "action": {
+                "type": "string",
+                "maxLength": 64,
+                "description": "Kind of action. removeMember triggers a full rekey.",
+                "knownValues": [
+                  "addMember",
+                  "removeMember",
+                  "addAdmin",
+                  "removeAdmin"
+                ]
+              }
+            },
+            "description": "One membership or admin action."
+          },
+          "groupChange": {
+            "type": "object",
+            "required": [
+              "groupId",
+              "epoch",
+              "actions",
+              "signerDid",
+              "signature"
+            ],
+            "properties": {
+              "epoch": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "New epoch; must equal the current epoch + 1."
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "ref": "#groupAction",
+                  "type": "ref",
+                  "description": "One action in this change."
+                },
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "Actions applied in order."
+              },
+              "groupId": {
+                "type": "string",
+                "maxLength": 64,
+                "description": "Group id this change applies to."
+              },
+              "signature": {
+                "type": "bytes",
+                "maxLength": 128,
+                "minLength": 1,
+                "description": "Signature by the signer's Signal identity key over the change."
+              },
+              "signerDid": {
+                "type": "string",
+                "format": "did",
+                "description": "DID of the signer; must be an admin in the current state."
+              }
+            },
+            "description": "A signed change to a group's membership or admin set."
+          },
+          "signedPreKey": {
+            "type": "object",
+            "required": [
+              "keyId",
+              "publicKey",
+              "signature"
+            ],
+            "properties": {
+              "keyId": {
+                "type": "integer",
+                "maximum": 4294967295,
+                "minimum": 0,
+                "description": "Signal prekey id."
+              },
+              "publicKey": {
+                "type": "bytes",
+                "maxLength": 2048,
+                "minLength": 1,
+                "description": "Serialized public key."
+              },
+              "signature": {
+                "type": "bytes",
+                "maxLength": 128,
+                "minLength": 1,
+                "description": "Signature over publicKey by the owner's Signal identity key."
+              }
+            },
+            "description": "A Signal signed prekey."
+          },
+          "groupSnapshot": {
+            "type": "object",
+            "required": [
+              "groupId",
+              "epoch",
+              "members",
+              "admins"
+            ],
+            "properties": {
+              "epoch": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Epoch of this snapshot."
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 512,
+                "description": "Group title.",
+                "maxGraphemes": 64
+              },
+              "admins": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "did",
+                  "description": "Admin DID."
+                },
+                "maxLength": 100,
+                "minLength": 1,
+                "description": "Group admins."
+              },
+              "groupId": {
+                "type": "string",
+                "maxLength": 64,
+                "description": "Group id."
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "did",
+                  "description": "Member DID."
+                },
+                "maxLength": 1000,
+                "description": "Group members."
+              }
+            },
+            "description": "Full state of a group at an epoch."
+          },
+          "conversationInit": {
+            "type": "object",
+            "required": [
+              "tagSeed"
+            ],
+            "properties": {
+              "tagSeed": {
+                "type": "bytes",
+                "maxLength": 32,
+                "minLength": 32,
+                "description": "Secret seed from which both parties derive rotating pairwise tags."
+              }
+            },
+            "description": "Sent in the first message of a pairwise conversation; both parties derive rotating tags from it."
+          },
+          "senderKeyDistribution": {
+            "type": "object",
+            "required": [
+              "groupId",
+              "distributionMessage"
+            ],
+            "properties": {
+              "groupId": {
+                "type": "string",
+                "maxLength": 64,
+                "description": "Group id the sender key belongs to."
+              },
+              "distributionMessage": {
+                "type": "bytes",
+                "maxLength": 4096,
+                "minLength": 1,
+                "description": "Serialized libsignal SenderKeyDistributionMessage."
+              }
+            },
+            "description": "Distributes the sender's group sender key to one member."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "Shared definitions for atsignal. Except for recordRef and signedPreKey, these are plaintext payloads that live inside ciphertext: they are encoded as DAG-CBOR before encryption and never appear in a public record body."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.device",
+      "cid": "bafyreiaawyuvdtiwrzkp5vk3d3mrbjth5orwnhhz76qj3fv2jsldmblksm",
+      "value": {
+        "id": "is.neuros.atsignal.device",
+        "defs": {
+          "main": {
+            "key": "any",
+            "type": "record",
+            "record": {
+              "type": "object",
+              "required": [
+                "deviceId",
+                "registrationId",
+                "signedPreKey",
+                "formatVersion",
+                "createdAt"
+              ],
+              "properties": {
+                "deviceId": {
+                  "type": "integer",
+                  "maximum": 2147483647,
+                  "minimum": 1,
+                  "description": "Signal device id. Sessions are established per device."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "datetime",
+                  "description": "When this device record was created."
+                },
+                "kyberPreKey": {
+                  "ref": "is.neuros.atsignal.defs#signedPreKey",
+                  "type": "ref",
+                  "description": "PQXDH last-resort Kyber prekey of this device. Optional."
+                },
+                "signedPreKey": {
+                  "ref": "is.neuros.atsignal.defs#signedPreKey",
+                  "type": "ref",
+                  "description": "Current X25519 signed prekey of this device."
+                },
+                "formatVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Version of this app's record encoding, independent of the libsignal version."
+                },
+                "registrationId": {
+                  "type": "integer",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "description": "Signal registration id of this device."
+                }
+              }
+            },
+            "description": "One Signal device of this account with its current signed prekeys. The record key is an opaque random id and carries no meaning."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "One Signal device of this account with its current signed prekeys."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.getMessagesByTag",
+      "cid": "bafyreifutq33ryxykg5resrclfp33fx43qradgllbf4a7j27uruzza5foy",
+      "value": {
+        "id": "is.neuros.atsignal.getMessagesByTag",
+        "defs": {
+          "main": {
+            "type": "query",
+            "output": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "messages"
+                ],
+                "properties": {
+                  "cursor": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "description": "Pass this back to get messages indexed later."
+                  },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "ref": "#messageView",
+                      "type": "ref"
+                    },
+                    "description": "Matching messages, oldest first."
+                  }
+                }
+              },
+              "encoding": "application/json"
+            },
+            "parameters": {
+              "type": "params",
+              "required": [
+                "tags"
+              ],
+              "properties": {
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "One base64url-encoded tag."
+                  },
+                  "maxLength": 50,
+                  "minLength": 1,
+                  "description": "Tags to look up, each base64url-encoded without padding."
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 50,
+                  "maximum": 100,
+                  "minimum": 1,
+                  "description": "Maximum number of messages to return."
+                },
+                "cursor": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "description": "Opaque cursor from a previous response. Only messages indexed after it are returned."
+                }
+              }
+            },
+            "description": "Return message records whose tag is one of the given tags, oldest first."
+          },
+          "messageView": {
+            "type": "object",
+            "required": [
+              "did",
+              "rkey",
+              "cid",
+              "tag",
+              "envelopeType",
+              "ciphertext",
+              "indexedAt"
+            ],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "format": "cid",
+                "description": "CID of the record version that was indexed."
+              },
+              "did": {
+                "type": "string",
+                "format": "did",
+                "description": "Author (sender) of the record."
+              },
+              "tag": {
+                "type": "bytes",
+                "maxLength": 32,
+                "minLength": 16,
+                "description": "The record's tag."
+              },
+              "rkey": {
+                "type": "string",
+                "format": "record-key",
+                "description": "Record key in the author's is.neuros.atsignal.message collection."
+              },
+              "indexedAt": {
+                "type": "string",
+                "format": "datetime",
+                "description": "When the AppView indexed the record."
+              },
+              "ciphertext": {
+                "type": "bytes",
+                "maxLength": 65536,
+                "minLength": 1,
+                "description": "The record's ciphertext."
+              },
+              "envelopeType": {
+                "type": "string",
+                "maxLength": 64,
+                "description": "The record's envelope type.",
+                "knownValues": [
+                  "prekey",
+                  "whisper",
+                  "senderKey",
+                  "firstContact"
+                ]
+              }
+            },
+            "description": "One indexed message record. Identified by author DID and record key, not an AT-URI, so the shape survives a move to Spaces."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "AppView query: find indexed message records by tag. The AppView sees tags, never recipients."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.groupState",
+      "cid": "bafyreieb364bxnlcpbny4erl5wtfuoupptoxgwoq6grw2sebzkudkkkw74",
+      "value": {
+        "id": "is.neuros.atsignal.groupState",
+        "defs": {
+          "main": {
+            "key": "any",
+            "type": "record",
+            "record": {
+              "type": "object",
+              "required": [
+                "epoch",
+                "stateCiphertext",
+                "formatVersion"
+              ],
+              "properties": {
+                "epoch": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Group epoch of this snapshot. Increments with every accepted groupChange."
+                },
+                "formatVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Version of the group-state format."
+                },
+                "stateCiphertext": {
+                  "type": "bytes",
+                  "maxLength": 262144,
+                  "minLength": 1,
+                  "description": "An is.neuros.atsignal.defs#groupSnapshot, DAG-CBOR encoded and encrypted under the group-state key."
+                }
+              }
+            },
+            "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is a random 22-character group id with no meaning. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.identity",
+      "cid": "bafyreifmfzjba7nm2ieir55f7pptjxtjc4rfwpiwzwuuzabnmhljtcuxp4",
+      "value": {
+        "id": "is.neuros.atsignal.identity",
+        "defs": {
+          "main": {
+            "key": "literal:self",
+            "type": "record",
+            "record": {
+              "type": "object",
+              "required": [
+                "identityKey",
+                "formatVersion",
+                "createdAt"
+              ],
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                  "format": "datetime",
+                  "description": "When this identity key record was created."
+                },
+                "identityKey": {
+                  "type": "bytes",
+                  "maxLength": 33,
+                  "minLength": 33,
+                  "description": "libsignal-serialized Curve25519 public identity key (type byte followed by 32 key bytes)."
+                },
+                "formatVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Version of this app's record encoding, independent of the libsignal version."
+                },
+                "firstContactKey": {
+                  "type": "bytes",
+                  "maxLength": 64,
+                  "description": "Reserved for a future private first-contact scheme. Unused in format version 1."
+                }
+              }
+            },
+            "description": "The account's public Signal identity key. The repo acts as the key directory, so clients must verify this key out of band (safety numbers) and alert the user when it changes."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "The account's public Signal identity key."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.message",
+      "cid": "bafyreiclwr37vytzeimr3w4bfvkcs3aivj5kamzoj2onumxgtk22foictm",
+      "value": {
+        "id": "is.neuros.atsignal.message",
+        "defs": {
+          "main": {
+            "key": "tid",
+            "type": "record",
+            "record": {
+              "type": "object",
+              "required": [
+                "tag",
+                "envelopeType",
+                "ciphertext",
+                "formatVersion"
+              ],
+              "properties": {
+                "tag": {
+                  "type": "bytes",
+                  "maxLength": 32,
+                  "minLength": 16,
+                  "description": "Rotating pairwise tag (a short HMAC value only the two parties can compute), or the recipient's public first-contact tag when envelopeType is firstContact."
+                },
+                "ciphertext": {
+                  "type": "bytes",
+                  "maxLength": 65536,
+                  "minLength": 1,
+                  "description": "Opaque libsignal ciphertext. The plaintext is a DAG-CBOR encoded is.neuros.atsignal.defs#plaintext."
+                },
+                "envelopeType": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "Kind of libsignal envelope carried in ciphertext.",
+                  "knownValues": [
+                    "prekey",
+                    "whisper",
+                    "senderKey",
+                    "firstContact"
+                  ]
+                },
+                "formatVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Version of the message format."
+                }
+              }
+            },
+            "description": "One libsignal ciphertext addressed by tag. The recipient, ratchet counter and sender-key distribution id are inside the ciphertext, never in plaintext."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "One libsignal ciphertext addressed by tag. The recipient, ratchet counter and sender-key distribution id are inside the ciphertext, never in plaintext."
+      }
+    },
+    {
+      "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.preKey",
+      "cid": "bafyreibbeq3pa3gxp76du5iqjweuyqvxrirpbtt4yb3fhk67jpz7f2cose",
+      "value": {
+        "id": "is.neuros.atsignal.preKey",
+        "defs": {
+          "main": {
+            "key": "tid",
+            "type": "record",
+            "record": {
+              "type": "object",
+              "required": [
+                "deviceId",
+                "preKeyId",
+                "publicKey",
+                "formatVersion"
+              ],
+              "properties": {
+                "deviceId": {
+                  "type": "integer",
+                  "maximum": 2147483647,
+                  "minimum": 1,
+                  "description": "Signal device id of the device that owns this prekey."
+                },
+                "preKeyId": {
+                  "type": "integer",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "description": "Signal prekey id."
+                },
+                "publicKey": {
+                  "type": "bytes",
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "description": "libsignal-serialized public key of this one-time prekey."
+                },
+                "formatVersion": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Version of this app's record encoding, independent of the libsignal version."
+                }
+              }
+            },
+            "description": "One one-time prekey. The owner deletes the record after the prekey is first used. Another sender may race for the same prekey; that sender falls back to X3DH without a one-time prekey."
+          }
+        },
+        "$type": "com.atproto.lexicon.schema",
+        "lexicon": 1,
+        "description": "One one-time Signal prekey."
+      }
+    }
+  ]
+}
