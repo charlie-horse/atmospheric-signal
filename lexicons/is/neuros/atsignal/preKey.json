@@ -1,0 +1,41 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.preKey",
+  "description": "One one-time Signal prekey.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "One one-time prekey. The owner deletes the record after the prekey is first used. Another sender may race for the same prekey; that sender falls back to X3DH without a one-time prekey.",
+      "record": {
+        "type": "object",
+        "required": ["deviceId", "preKeyId", "publicKey", "formatVersion"],
+        "properties": {
+          "deviceId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Signal device id of the device that owns this prekey."
+          },
+          "preKeyId": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "description": "Signal prekey id."
+          },
+          "publicKey": {
+            "type": "bytes",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "libsignal-serialized public key of this one-time prekey."
+          },
+          "formatVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Version of this app's record encoding, independent of the libsignal version."
+          }
+        }
+      }
+    }
+  }
+}

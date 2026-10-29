@@ -1,0 +1,50 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.device",
+  "description": "One Signal device of this account with its current signed prekeys.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "any",
+      "description": "One Signal device of this account with its current signed prekeys. The record key is an opaque random id and carries no meaning.",
+      "record": {
+        "type": "object",
+        "required": ["deviceId", "registrationId", "signedPreKey", "formatVersion", "createdAt"],
+        "properties": {
+          "deviceId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Signal device id. Sessions are established per device."
+          },
+          "registrationId": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "description": "Signal registration id of this device."
+          },
+          "signedPreKey": {
+            "type": "ref",
+            "ref": "is.neuros.atsignal.defs#signedPreKey",
+            "description": "Current X25519 signed prekey of this device."
+          },
+          "kyberPreKey": {
+            "type": "ref",
+            "ref": "is.neuros.atsignal.defs#signedPreKey",
+            "description": "PQXDH last-resort Kyber prekey of this device. Optional."
+          },
+          "formatVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Version of this app's record encoding, independent of the libsignal version."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this device record was created."
+          }
+        }
+      }
+    }
+  }
+}

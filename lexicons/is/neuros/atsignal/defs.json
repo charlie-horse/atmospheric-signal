@@ -1,0 +1,211 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.defs",
+  "description": "Shared definitions for atsignal. Except for recordRef and signedPreKey, these are plaintext payloads that live inside ciphertext: they are encoded as DAG-CBOR before encryption and never appear in a public record body.",
+  "defs": {
+    "signedPreKey": {
+      "type": "object",
+      "description": "A Signal signed prekey.",
+      "required": ["keyId", "publicKey", "signature"],
+      "properties": {
+        "keyId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "description": "Signal prekey id."
+        },
+        "publicKey": {
+          "type": "bytes",
+          "minLength": 1,
+          "maxLength": 2048,
+          "description": "Serialized public key."
+        },
+        "signature": {
+          "type": "bytes",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Signature over publicKey by the owner's Signal identity key."
+        }
+      }
+    },
+    "recordRef": {
+      "type": "object",
+      "description": "Location-independent reference to a record. Use instead of AT-URIs so records stay portable to Spaces.",
+      "required": ["did", "collection", "rkey"],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did",
+          "description": "DID of the repo that holds the record."
+        },
+        "collection": {
+          "type": "string",
+          "format": "nsid",
+          "description": "Collection NSID of the record."
+        },
+        "rkey": {
+          "type": "string",
+          "format": "record-key",
+          "description": "Record key of the record."
+        }
+      }
+    },
+    "plaintext": {
+      "type": "object",
+      "description": "The decrypted payload of any message.",
+      "required": ["content"],
+      "properties": {
+        "content": {
+          "type": "union",
+          "refs": ["#text", "#conversationInit", "#senderKeyDistribution", "#groupChange", "#groupSnapshot"],
+          "description": "The message content."
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "description": "A text message.",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 64000,
+          "maxGraphemes": 10000,
+          "description": "Message text."
+        }
+      }
+    },
+    "conversationInit": {
+      "type": "object",
+      "description": "Sent in the first message of a pairwise conversation; both parties derive rotating tags from it.",
+      "required": ["tagSeed"],
+      "properties": {
+        "tagSeed": {
+          "type": "bytes",
+          "minLength": 32,
+          "maxLength": 32,
+          "description": "Secret seed from which both parties derive rotating pairwise tags."
+        }
+      }
+    },
+    "senderKeyDistribution": {
+      "type": "object",
+      "description": "Distributes the sender's group sender key to one member.",
+      "required": ["groupId", "distributionMessage"],
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Group id the sender key belongs to."
+        },
+        "distributionMessage": {
+          "type": "bytes",
+          "minLength": 1,
+          "maxLength": 4096,
+          "description": "Serialized libsignal SenderKeyDistributionMessage."
+        }
+      }
+    },
+    "groupChange": {
+      "type": "object",
+      "description": "A signed change to a group's membership or admin set.",
+      "required": ["groupId", "epoch", "actions", "signerDid", "signature"],
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Group id this change applies to."
+        },
+        "epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "New epoch; must equal the current epoch + 1."
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#groupAction",
+            "description": "One action in this change."
+          },
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Actions applied in order."
+        },
+        "signerDid": {
+          "type": "string",
+          "format": "did",
+          "description": "DID of the signer; must be an admin in the current state."
+        },
+        "signature": {
+          "type": "bytes",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Signature by the signer's Signal identity key over the change."
+        }
+      }
+    },
+    "groupAction": {
+      "type": "object",
+      "description": "One membership or admin action.",
+      "required": ["action", "did"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "maxLength": 64,
+          "knownValues": ["addMember", "removeMember", "addAdmin", "removeAdmin"],
+          "description": "Kind of action. removeMember triggers a full rekey."
+        },
+        "did": {
+          "type": "string",
+          "format": "did",
+          "description": "DID the action applies to."
+        }
+      }
+    },
+    "groupSnapshot": {
+      "type": "object",
+      "description": "Full state of a group at an epoch.",
+      "required": ["groupId", "epoch", "members", "admins"],
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Group id."
+        },
+        "epoch": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Epoch of this snapshot."
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "did",
+            "description": "Member DID."
+          },
+          "maxLength": 1000,
+          "description": "Group members."
+        },
+        "admins": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "did",
+            "description": "Admin DID."
+          },
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Group admins."
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 512,
+          "maxGraphemes": 64,
+          "description": "Group title."
+        }
+      }
+    }
+  }
+}

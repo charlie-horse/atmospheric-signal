@@ -1,0 +1,39 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.identity",
+  "description": "The account's public Signal identity key.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "The account's public Signal identity key. The repo acts as the key directory, so clients must verify this key out of band (safety numbers) and alert the user when it changes.",
+      "record": {
+        "type": "object",
+        "required": ["identityKey", "formatVersion", "createdAt"],
+        "properties": {
+          "identityKey": {
+            "type": "bytes",
+            "minLength": 33,
+            "maxLength": 33,
+            "description": "libsignal-serialized Curve25519 public identity key (type byte followed by 32 key bytes)."
+          },
+          "formatVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Version of this app's record encoding, independent of the libsignal version."
+          },
+          "firstContactKey": {
+            "type": "bytes",
+            "maxLength": 64,
+            "description": "Reserved for a future private first-contact scheme. Unused in format version 1."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this identity key record was created."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.groupState",
+  "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "any",
+      "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is a random 22-character group id with no meaning. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive.",
+      "record": {
+        "type": "object",
+        "required": ["epoch", "stateCiphertext", "formatVersion"],
+        "properties": {
+          "epoch": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Group epoch of this snapshot. Increments with every accepted groupChange."
+          },
+          "stateCiphertext": {
+            "type": "bytes",
+            "minLength": 1,
+            "maxLength": 262144,
+            "description": "An is.neuros.atsignal.defs#groupSnapshot, DAG-CBOR encoded and encrypted under the group-state key."
+          },
+          "formatVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Version of the group-state format."
+          }
+        }
+      }
+    }
+  }
+}

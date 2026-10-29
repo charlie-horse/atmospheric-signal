@@ -1,0 +1,41 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.message",
+  "description": "One libsignal ciphertext addressed by tag. The recipient, ratchet counter and sender-key distribution id are inside the ciphertext, never in plaintext.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "One libsignal ciphertext addressed by tag. The recipient, ratchet counter and sender-key distribution id are inside the ciphertext, never in plaintext.",
+      "record": {
+        "type": "object",
+        "required": ["tag", "envelopeType", "ciphertext", "formatVersion"],
+        "properties": {
+          "tag": {
+            "type": "bytes",
+            "minLength": 16,
+            "maxLength": 32,
+            "description": "Rotating pairwise tag (a short HMAC value only the two parties can compute), or the recipient's public first-contact tag when envelopeType is firstContact."
+          },
+          "envelopeType": {
+            "type": "string",
+            "maxLength": 64,
+            "knownValues": ["prekey", "whisper", "senderKey", "firstContact"],
+            "description": "Kind of libsignal envelope carried in ciphertext."
+          },
+          "ciphertext": {
+            "type": "bytes",
+            "minLength": 1,
+            "maxLength": 65536,
+            "description": "Opaque libsignal ciphertext. The plaintext is a DAG-CBOR encoded is.neuros.atsignal.defs#plaintext."
+          },
+          "formatVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Version of the message format."
+          }
+        }
+      }
+    }
+  }
+}
