@@ -30,6 +30,8 @@ async function startAppview(): Promise<ChildProcess> {
     cwd: join(here, '../appview'),
     env: { ...process.env, ATSIG_APPVIEW_DATA: data },
     stdio: ['ignore', 'inherit', 'inherit'],
+    // Own process group, so stopAppview() also reaches the tsx/node process under npx.
+    detached: true,
   })
   for (let i = 0; i < 60; i++) {
     try {
@@ -38,8 +40,14 @@ async function startAppview(): Promise<ChildProcess> {
     } catch {}
     await sleep(500)
   }
-  proc.kill()
+  stopAppview(proc)
   throw new Error('AppView did not become healthy')
+}
+
+function stopAppview(proc: ChildProcess) {
+  try {
+    process.kill(-proc.pid!, 'SIGTERM')
+  } catch {}
 }
 
 /** Polls every inbox until a full round brings nothing new, then returns what each client received. */
@@ -137,7 +145,7 @@ async function main() {
 
     console.log('\nE2E PASS')
   } finally {
-    appview.kill('SIGTERM')
+    stopAppview(appview)
   }
 }
 
