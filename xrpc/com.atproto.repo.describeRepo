@@ -16,7 +16,7 @@
         "id": "did:web:atsignal.neuros.is#atproto",
         "type": "Multikey",
         "controller": "did:web:atsignal.neuros.is",
-        "publicKeyMultibase": "zQ3shm6wC62yyfNVs6jE2cP36jpCgejeN67ZApXcCnxRVFHrc"
+        "publicKeyMultibase": "zQ3shsftrMvfKs9DTNhx8GYucQNMRi6nYhY4Y3gvKyiYcFGeU"
       }
     ],
     "service": [

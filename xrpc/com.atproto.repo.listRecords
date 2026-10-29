@@ -450,7 +450,7 @@
     },
     {
       "uri": "at://did:web:atsignal.neuros.is/com.atproto.lexicon.schema/is.neuros.atsignal.groupState",
-      "cid": "bafyreieb364bxnlcpbny4erl5wtfuoupptoxgwoq6grw2sebzkudkkkw74",
+      "cid": "bafyreickei6lsymwjues63cazyozsupj27o366my2x5e7fruniftpkm6om",
       "value": {
         "id": "is.neuros.atsignal.groupState",
         "defs": {
@@ -483,7 +483,7 @@
                 }
               }
             },
-            "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is a random 22-character group id with no meaning. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive."
+            "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is an opaque 22-character value derived one-way from the group id; it must never be the group id itself. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive."
           }
         },
         "$type": "com.atproto.lexicon.schema",
