@@ -6,7 +6,7 @@
     "main": {
       "type": "record",
       "key": "any",
-      "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is a random 22-character group id with no meaning. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive.",
+      "description": "Encrypted snapshot of a group's state for joiners, written by the group creator. The record key is an opaque 22-character value derived one-way from the group id; it must never be the group id itself. The plaintext is an is.neuros.atsignal.defs#groupSnapshot encrypted under a group-state key that only members receive.",
       "record": {
         "type": "object",
         "required": ["epoch", "stateCiphertext", "formatVersion"],

@@ -77,7 +77,7 @@ The recipient, the ratchet counter, and the sender-key distribution id are insid
 - SKDM: sent pairwise to each member as a message record, over the pairwise session. It carries the chain key and iteration inside the ciphertext.
 - Membership lives in encrypted state held by each member. There is no public membership record.
 - Membership changes travel as encrypted control messages (`defs#groupChange`), sent pairwise through message records. Each is signed by an admin's Signal identity key. A client applies a change only if the signer is an admin in its current state and the change's epoch is the current epoch + 1.
-- The creator keeps an encrypted snapshot of the group state in `is.neuros.atsignal.groupState`, record key = a random group id. Joiners use it to catch up on membership, not on message history.
+- The creator keeps an encrypted snapshot of the group state in `is.neuros.atsignal.groupState`, record key = a one-way hash of the group id, never the group id itself (the group id keys the group tag and the state encryption, so it stays inside ciphertext). Joiners use it to catch up on membership, not on message history.
 
 **Group policy (decision 4; our design, not spec):**
 - An admin set may change membership. Only changes signed by a current admin are applied.

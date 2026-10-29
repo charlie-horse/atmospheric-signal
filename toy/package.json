@@ -1,0 +1,9 @@
+{
+  "name": "atsignal-toy",
+  "private": true,
+  "type": "module",
+  "description": "Toy client and AppView for Signal over ATProto. Each subdirectory is an independent package with its own node_modules.",
+  "scripts": {
+    "typecheck": "for p in shared appview client publish e2e; do (cd $p && npx tsc --noEmit -p .) || exit 1; done"
+  }
+}

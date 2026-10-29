@@ -1,0 +1,13 @@
+{
+  "name": "atsignal-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "e2e": "tsx run.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

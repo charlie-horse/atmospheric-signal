@@ -1,0 +1,78 @@
+{
+  "lexicon": 1,
+  "id": "is.neuros.atsignal.getMessagesByTag",
+  "description": "AppView query: find indexed message records by tag. The AppView sees tags, never recipients.",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Return message records whose tag is one of the given tags, oldest first.",
+      "parameters": {
+        "type": "params",
+        "required": ["tags"],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "description": "Tags to look up, each base64url-encoded without padding.",
+            "minLength": 1,
+            "maxLength": 50,
+            "items": {
+              "type": "string",
+              "description": "One base64url-encoded tag.",
+              "maxLength": 64
+            }
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque cursor from a previous response. Only messages indexed after it are returned.",
+            "maxLength": 128
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of messages to return.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["messages"],
+          "properties": {
+            "cursor": {
+              "type": "string",
+              "description": "Pass this back to get messages indexed later.",
+              "maxLength": 128
+            },
+            "messages": {
+              "type": "array",
+              "description": "Matching messages, oldest first.",
+              "items": { "type": "ref", "ref": "#messageView" }
+            }
+          }
+        }
+      }
+    },
+    "messageView": {
+      "type": "object",
+      "description": "One indexed message record. Identified by author DID and record key, not an AT-URI, so the shape survives a move to Spaces.",
+      "required": ["did", "rkey", "cid", "tag", "envelopeType", "ciphertext", "indexedAt"],
+      "properties": {
+        "did": { "type": "string", "format": "did", "description": "Author (sender) of the record." },
+        "rkey": { "type": "string", "format": "record-key", "description": "Record key in the author's is.neuros.atsignal.message collection." },
+        "cid": { "type": "string", "format": "cid", "description": "CID of the record version that was indexed." },
+        "tag": { "type": "bytes", "minLength": 16, "maxLength": 32, "description": "The record's tag." },
+        "envelopeType": {
+          "type": "string",
+          "maxLength": 64,
+          "knownValues": ["prekey", "whisper", "senderKey", "firstContact"],
+          "description": "The record's envelope type."
+        },
+        "ciphertext": { "type": "bytes", "minLength": 1, "maxLength": 65536, "description": "The record's ciphertext." },
+        "indexedAt": { "type": "string", "format": "datetime", "description": "When the AppView indexed the record." }
+      }
+    }
+  }
+}

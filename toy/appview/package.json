@@ -1,0 +1,22 @@
+{
+  "name": "@atsig/appview",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@atproto/identity": "0.5.20",
+    "@atproto/lexicon": "0.7.17",
+    "@atproto/sync": "0.4.20",
+    "@atproto/xrpc-server": "0.13.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

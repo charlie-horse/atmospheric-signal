@@ -1,0 +1,24 @@
+{
+  "name": "@atsig/client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Toy Signal-over-ATProto client: AtsigClient library and atsig CLI.",
+  "license": "AGPL-3.0-only",
+  "bin": { "atsig": "src/cli.ts" },
+  "scripts": {
+    "atsig": "tsx src/cli.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@atproto/api": "0.29.6",
+    "@atproto/common-web": "0.5.15",
+    "@signalapp/libsignal-client": "0.106.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

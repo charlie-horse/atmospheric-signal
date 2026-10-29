@@ -1,0 +1,22 @@
+{
+  "name": "@atsig/publish",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsx build.ts",
+    "serve": "tsx serve.ts",
+    "verify": "tsx verify.ts"
+  },
+  "dependencies": {
+    "@atproto/crypto": "0.5.7",
+    "@atproto/lexicon": "0.7.17",
+    "@atproto/lexicon-resolver": "0.4.30",
+    "@atproto/repo": "0.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}
