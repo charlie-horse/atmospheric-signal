@@ -1,0 +1,29 @@
+diff --git a/cmd/relay/relay/host_checker.go b/cmd/relay/relay/host_checker.go
+index 251ff2c0..4c548661 100644
+--- a/cmd/relay/relay/host_checker.go
++++ b/cmd/relay/relay/host_checker.go
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"net/http"
++	"strings"
+ 	"time"
+ 
+ 	comatproto "github.com/bluesky-social/indigo/api/atproto"
+@@ -44,8 +45,15 @@ func NewHostClient(userAgent string) *HostClient {
+ }
+ 
+ func (hc *HostClient) apiClient(host string) *atclient.APIClient {
++	httpClient := hc.Client
++	// atsig-toy local stack patch: the SSRF-safe transport refuses 127.0.0.1, which
++	// makes admin requestCrawl of a "localhost:<port>" PDS impossible. Hosts named
++	// exactly localhost:<port> can only be added via the admin API, so allow them.
++	if strings.HasPrefix(host, "http://localhost:") || strings.HasPrefix(host, "https://localhost:") {
++		httpClient = &http.Client{Timeout: hc.Client.Timeout}
++	}
+ 	client := atclient.APIClient{
+-		Client: hc.Client,
++		Client: httpClient,
+ 		Host:   host,
+ 		Headers: map[string][]string{
+ 			"User-Agent": []string{hc.UserAgent},

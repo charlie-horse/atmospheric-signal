@@ -69,7 +69,7 @@ async function main() {
   try {
     const home = mkdtempSync(join(tmpdir(), 'atsig-e2e-'))
     const mk = (name: string) =>
-      new AtsigClient({ home, handle: `${name}-${run}.${handleDomain}`, password: `pw-${name}-${run}` })
+      new AtsigClient({ home, handle: `${name}-${run}.${handleDomain}`, password: `Atsig-${name}-${run}-Pw1` })
     const alice = mk('alice')
     const bob = mk('bob')
     const carol = mk('carol')

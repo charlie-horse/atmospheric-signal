@@ -19,7 +19,8 @@ export function handleEvent(db: Db, evt: Event): void {
 }
 
 export function startIndexer(db: Db, relayUrl: string = config.relayUrl): Indexer {
-  const idResolver = new IdResolver({ plcUrl: config.plcUrl })
+  // Plain fetch: the default SSRF-safe fetch refuses the local http:// PLC (toy/stack/README.md).
+  const idResolver = new IdResolver({ plcUrl: config.plcUrl, fetch: globalThis.fetch })
   // The runner only advances the cursor past an event once it (and every
   // earlier event) has been handled; setCursor persists it so restarts resume.
   const runner = new MemoryRunner({
