@@ -1,0 +1,16 @@
+{
+  "name": "atsignal-demo",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Toy demo of Signal on ATProto: in-memory PDS + firehose indexer, real libsignal crypto",
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "demo": "node src/run.js"
+  },
+  "dependencies": {
+    "@atproto/lexicon": "0.7.19",
+    "@ipld/dag-cbor": "10.0.2",
+    "@signalapp/libsignal-client": "0.106.2"
+  }
+}
